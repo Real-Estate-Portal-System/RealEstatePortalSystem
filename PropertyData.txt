@@ -1,0 +1,4 @@
+1000|2010|5|500000|500|Excellent|20th|Nasr|Cairo|25000|Mansion
+1001|2000|4|400000|100|Brilliant|Alexis|Madina|Cairo|15000|Apartment
+1004|2015|2|25000|100|Excellent|12th|Benson|Meldon|1500|Condo
+1003|2007|7|800000|6000.5|Excellent|Alaba|San|Maelin|45000|Palance
