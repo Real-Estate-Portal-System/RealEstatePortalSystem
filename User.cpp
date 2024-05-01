@@ -126,113 +126,41 @@ bool User::login() {
 }
 //Function that displays only User's accessed options
 void User::user_menu() {
+
     PropertyManager manager;
     system("cls");
-    cout << "Hello , @" << username << endl << endl;
-    cout << "*************************" << endl << endl;
-    cout << "1.Personal Info" << endl;
-    cout << "2.Register Properties" << endl;
-    cout << "3.Search for Properties" << endl;
-    cout << "4.Compare Properties" << endl;
-    cout << "5.Log out" << endl;
+    bool exitFlag = false;
+  
 
-    int choices;
-    cin >> choices;
+    while (!exitFlag) {
+        cout << "Hello , @" << username << endl << endl;
+        cout << "*************************" << endl << endl;
+        cout << "1.Personal Info" << endl;
+        cout << "2.Property Management" << endl;
+        cout << "3.Log out" << endl;
 
-    switch (choices) {
-    case 1:
-        system("cls");
-        User::updateInfo(password, lname, lname);
-        break;
-    case 2: {
-        system("cls");
-        int propertyNumber, numberOfBedrooms;
-        double marketValue, squareFootage, price;
-        string builtYear, condition, street, city, state, type;
+        int choices;
+        cin >> choices;
 
-        cout << "Enter The Property Number: ";
-        while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
+        switch (choices) {
+            case 1: {
+                  system("cls");
+                  User::updateInfo(password, lname, lname);
+                  break;
+            }
+            case 2: {
+                  manager.propertyManagerUser();
+                  break;
+            }
+            case 3: {
+                system("cls");
+                exitFlag = true;
+                cout << "Thanks for Your Time, Goodbye!!" << endl;
+                break;
+
+            }
+
         }
-
-        cout << "Enter Property's Built Year: ";
-        cin.ignore();
-        getline(cin, builtYear);
-
-        cout << "Enter Property's Number of Bedrooms: ";
-        while (!(cin >> numberOfBedrooms) || numberOfBedrooms < 0 || cin.peek() != '\n' || cin.peek() == '.') {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
-        }
-
-        cout << "Enter Property's Market Value: ";
-        while (!(cin >> marketValue) || marketValue < 0) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a non-negative number for the Market Value: ";
-        }
-
-        cout << "Enter Property's SquareFootage: ";
-        while (!(cin >> squareFootage) || squareFootage < 0) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a non-negative number for the SquareFootage: ";
-        }
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        cout << "Enter Property's Condition: ";
-        getline(cin, condition);
-
-        cout << "Enter Property's Street: ";
-        getline(cin, street);
-        cout << "Enter Property's City: ";
-        getline(cin, city);
-        cout << "Enter Property's State: ";
-        getline(cin, state);
-
-        cout << "Enter Property's Price: ";
-        while (!(cin >> price) || price < 0) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a non-negative number for the Price: ";
-        }
-
-        // Clear input buffer
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-        cout << "Enter Property's Type: ";
-        getline(cin, type);
-
-        manager.addProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
-            condition, street, city, state, price, type);
-        cout << "**************************************************\n" << endl;
-        user_menu();
-        break;
-    }
-    case 3:
-        system("cls");
-        manager.searchProperty();
-        cout << "**************************************************\n" << endl;
-        break;
-    case 4: system("cls");
-
-        break;
-    case 5:
-        system("cls");
-        welcome_page_user();
-
-        break;
-    default: {
-        system("cls");
-        cout << "Incorrect option" << endl;
-        User::user_menu();
-    }
-
     }
 }
 
@@ -274,7 +202,6 @@ bool User::updateInfo(const string& newPassword, const string& newFirstName, con
 
 void welcome_page_user() {
     
-
     int choice;
     bool exitFlag = false;
     
@@ -286,36 +213,30 @@ void welcome_page_user() {
         cout << "3. Exit" << endl;
         cin >> choice;
         switch (choice) {
-        case 1:
-            // Sign Up
-        {
+           case 1:{
             system("cls");
             User::signup();
             welcome_page_user();
             break;
-        }
-        
-        case 2:
-            // Login
-        {
+           }
+           case 2:{
+
             system("cls");
             User::login();
             break;
-        }
-
-        
-        case 3: {
+           }
+           case 3: {
             // Exit
             system("cls");
             exitFlag = true;
-            // welcome_page();
+            //welcome_page();
             break;
-        }
-        default:
-        {
+           }
+           default:{
             cout << "Invalid choice!" << endl;
             welcome_page_user();
-        }
+           }
+
         }
     }
 }

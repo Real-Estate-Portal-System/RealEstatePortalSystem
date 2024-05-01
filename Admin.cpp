@@ -127,72 +127,52 @@ bool Admin::loginAdmin() {
 }
 //Function that displays only User's accessed options
 void Admin::admin_menu() {
+
+    bool exitFlag = false;
+
+    PropertyManager manager;
+    int choice;
+
     cout << "Hello , @" << username << endl << endl;
-    cout << "*************************" << endl << endl;
-    cout << "1.Personal Info" << endl;
-    cout << "2.Create new admin" << endl;
-    cout << "3.User Management" << endl;
-    cout << "4.Manage Listings:" << endl;
-    cout << "5.Log out" << endl;
+    while (!exitFlag) {
+        cout << "*************************" << endl << endl;
+        cout << "1.Personal Info" << endl;
+        cout << "2.Create new admin" << endl;
+        cout << "3.User Management" << endl;
+        cout << "4.Manage Listings:" << endl;
+        cout << "5.Log out" << endl;
 
-    int choices;
-    cin >> choices;
+        cin >> choice;
 
-    switch (choices) {
-    case 1:
-        system("cls");
-        Admin::updateAdminInfo(password, lname, lname);
-        break;
-    case 2:
-        system("cls");
-        Admin::createNewAdmin();
-        break;
-    case 3:
-        system("cls");
+        switch (choice) {
+            case 1:
+                 system("cls");
+                 Admin::updateAdminInfo(password, lname, lname);
+                 break;
+            case 2:
+                 system("cls");
+                 Admin::createNewAdmin();
+                 break;
+            case 3:
+                 system("cls");
+                 break;
 
-        break;
-    case 4:
-        system("cls");
-        welcome_page_admin();
-        break;
-    case 5:
-        system("cls");
-        welcome_page_admin();
-        break;
-    default: {
-        system("cls");
-        cout << "Incorrect option" << endl;
-        Admin::admin_menu();
-    }
+            case 4:
+                 manager.propertyManagerAdmin();
+                 system("cls");
+                 //welcome_page_admin();
+                 break;
+            case 5:
+                 system("cls");
+                 exitFlag = true;
+                // welcome_page_admin();
+                 break;
 
+        }
     }
 }
 
-// Function to display user choices from the options provided above
-/*void choices(const string& username) {
 
-    int answer;
-    cout << "Do you want to update info? " << endl;
-    cout << "1: Yes " << endl;
-    cout << "2: No " << endl;
-
-    cin >> answer;
-    switch (answer) {
-    case 1:
-        update_info(username);
-        break;
-    case 2:
-        system("cls");
-        user_menu(username);
-        break;
-
-    default: {
-        system("cls");
-        cout << "Invalid choice, try again!" << endl;
-        choices(username);
-    }
-    }
-}*/
 bool Admin::updateAdminInfo(const string& newPassword, const string& newFirstName, const string& newLastName) {
     if (newPassword.empty() && newFirstName.empty() && newLastName.empty()) {
         // No updates provided
@@ -205,42 +185,36 @@ bool Admin::updateAdminInfo(const string& newPassword, const string& newFirstNam
 }
 
 void welcome_page_admin() {
-    cout << "Admin Portal" << endl;
-    cout << "1. Sign Up" << endl;
-    cout << "2. Login" << endl;
-    cout << "3. Exit" << endl;
+    bool exitFlag = false;
 
-    int choice;
-    cin >> choice;
+    while (!exitFlag) {
+        cout << "\t\t\t***Admin Portal***\n" << endl;
+        cout << "\t\t\t1. Sign Up" << endl;
+        cout << "\t\t\t2. Login" << endl;
+        cout << "\t\t\t3. Exit" << endl;
 
-    switch (choice) {
-    case 1:
-        // Sign Up
-    {
-        system("cls");
-        Admin::signupAdmin();
-        welcome_page_admin();
-    }
-    break;
-    case 2:
-        // Login
-    {
-        system("cls");
-        Admin::loginAdmin();
+        int choice;
+        cin >> choice;
 
-    }
-
-    break;
-    case 3:
-        // Exit
-        cout << "Exiting..." << endl;
-        exit(0);
-        break;
-    default:
-    {
-        cout << "Invalid choice!" << endl;
-        welcome_page_admin();
-    }
+        switch (choice) {
+           case 1:{
+            system("cls");
+            Admin::signupAdmin();
+            welcome_page_admin();
+            break;
+            }
+           case 2:{
+            system("cls");
+            Admin::loginAdmin();
+            break;
+           }
+           case 3: {
+            // Exit
+            exitFlag = true;
+            cout << "Exiting..." << endl;
+            break;
+           }
+        }
     }
 }
 void Admin::createNewAdmin() {

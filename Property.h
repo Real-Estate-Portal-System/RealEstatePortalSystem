@@ -32,6 +32,7 @@ public:
     void setConditionState(std::string conditionState);
     void setPrice(double price);
     void setPropertyType(std::string propertyType);
+
     // Getter Methods
     int getBedRoomNumber() const;
     double getMarketValue() const;
