@@ -139,10 +139,15 @@ void Admin::admin_menu() {
         cout << "1.Personal Info" << endl;
         cout << "2.Create new admin" << endl;
         cout << "3.User Management" << endl;
-        cout << "4.Manage Listings:" << endl;
+        cout << "4.Property Management & Listings:" << endl;
         cout << "5.Log out" << endl;
 
-        cin >> choice;
+        cout << "Enter choice To Execute: ";
+        while (!(cin >> choice) || choice < 1 || choice > 5 || cin.peek() != '\n' || cin.peek() == '.') {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid choice. Please enter a number between 1 and 4: ";
+        }
 
         switch (choice) {
             case 1:
@@ -194,7 +199,12 @@ void welcome_page_admin() {
         cout << "\t\t\t3. Exit" << endl;
 
         int choice;
-        cin >> choice;
+        cout << "Enter choice To Execute: ";
+        while (!(cin >> choice) || choice < 1 || choice > 3 || cin.peek() != '\n' || cin.peek() == '.') {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid choice. Please enter a number between 1 and 4: ";
+        }
 
         switch (choice) {
            case 1:{

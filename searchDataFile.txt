@@ -1,0 +1,3 @@
+SquareFootage Range|4
+Mansion|1
+Madina|1

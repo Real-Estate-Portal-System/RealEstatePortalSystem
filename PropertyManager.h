@@ -26,6 +26,7 @@ public:
     void propertyManagerUser();
     void propertyManagerAdmin();
     void compareProperties();
+    void searchBysquareFootageRange(double minFootage,double maxFootage);
 
     // Search functions
     void searchProperty();

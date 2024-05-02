@@ -40,7 +40,7 @@ void PropertyManager::addProperty(int propertyNumber, const string& builtYear, i
     }
 }
 
-
+// Method for users to add propert(y)ies to the Queue for approval. 
 
 void PropertyManager::addUnApprovedProperty(int propertyNumber, const string& builtYear, int numberOfBedrooms, double marketValue,
     double squareFootage, const string& condition, const string& street,
@@ -251,10 +251,11 @@ void PropertyManager::searchProperty() {
         cout << "\t\t2. By Price Range\n";
         cout << "\t\t3. By Bedrooms\n";
         cout << "\t\t4. By Property Type\n";
-        cout << "\t\t5. Exit\n";
+        cout << "\t\t5. By SquareFootage Range\n";
+        cout << "\t\t6. Exit\n";
 
         cout << "Choose a search criterion: ";
-        while (!(cin >> choice) || choice < 1 || choice > 5 || cin.peek() != '\n' || cin.peek() == '.') {
+        while (!(cin >> choice) || choice < 1 || choice > 6 || cin.peek() != '\n' || cin.peek() == '.') {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Invalid choice. Please enter a number between 1 and 5: ";
@@ -287,7 +288,7 @@ void PropertyManager::searchProperty() {
             while (!(cin >> maxPrice) || maxPrice < minPrice) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a number greater than or equal to " << minPrice << ": ";
+                cout << "Invalid input. Please enter a number greater than " << minPrice << ": ";
             }
 
             searchByPriceRange(minPrice, maxPrice);
@@ -336,11 +337,34 @@ void PropertyManager::searchProperty() {
         break;
 
 
-        case 5:
+        case 5: {// search by SquareFootage range
+            double minFootage, maxFootage;
+            cout << "Enter the minimum SquareFootage: ";
+            while (!(cin >> minFootage) || minFootage < 0) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input. Please enter a non-negative number: ";
+            }
+
+            cout << "Enter the maximum price: ";
+            while (!(cin >> maxFootage) || maxFootage < minFootage) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input. Please enter a number greater than  " << minFootage << ": ";
+            }
+
+            searchBysquareFootageRange(minFootage, maxFootage);
+            searchFrequency["SquareFootage Range"]++; // Increment frequency for squareFootage range search
+            //searchCount++;
+
+        }
+              break;
+
+        case 6:
             cout << "Exiting search...\n";
             break;
         }
-    } while (choice != 5);
+    } while (choice != 6);
 }
 
 
@@ -361,7 +385,7 @@ void PropertyManager::editProperty(int propertyNumber) {
 
             while (!exitFlag) {
                 int choice;
-                cout << "\t\t 1. Edit The Property's Number of Bedrooms" << endl;
+                cout << "\n\t\t 1. Edit The Property's Number of Bedrooms" << endl;
                 cout << "\t\t 2. Edit Condition of the Property" << endl;
                 cout << "\t\t 3. Edit Market Value of the Property" << endl;
                 cout << "\t\t 4. Exit\n" << endl;
@@ -473,9 +497,32 @@ void PropertyManager::searchByPriceRange(double minPrice, double maxPrice) {
     }
 
     if (count == 0) {
-        cout << "No properties found within the specified price range.\n";
+        cout << "No properties found within the specified Price range.\n";
     }
 }
+
+// Method to search for properties within a SquareFootage range
+
+void PropertyManager::searchBysquareFootageRange(double minFootage, double maxFootage) {
+    int count = 0;
+
+    for (const auto& entry : propertyMap) {
+        const Property& property = entry.second;
+        if (property.getSquareFootage() >= minFootage && property.getSquareFootage() <= maxFootage) {
+            displayPropertyDetails(property);
+            ++count;
+        }
+    }
+
+    if (count == 0) {
+        cout << "No properties found within the specified SquareFootage range.\n";
+    }
+
+}
+
+
+
+
 
 // Method to search for properties by number of bedrooms
 void PropertyManager::searchByBedrooms(int minBedrooms, int maxBedrooms) {
@@ -524,6 +571,7 @@ Property* PropertyManager::getPropertyByNumber(int propertyNumber) {
     }
 }
 
+// Method that generates reports 
 
 void PropertyManager::generateReport() {
     // Total number of properties added
@@ -533,6 +581,7 @@ void PropertyManager::generateReport() {
     int totalSearches = calculateTotalSearches();
     double totalTaxRevenue = calculateTotalTaxRevenue();
     double averageMarketValue = calculateAverageMarketValue();
+    double percentageofmaxsearch = 0;
 
 
     // Leading search (search with the highest frequency)
@@ -545,6 +594,7 @@ void PropertyManager::generateReport() {
         }
     }
 
+    percentageofmaxsearch = ((double)leadingSearchCount / (double)totalSearches) * 100;
 
     cout << "----- Property Management Report -----" << endl;
     cout << "Total Properties Added: " << totalProperties << endl;
@@ -552,7 +602,11 @@ void PropertyManager::generateReport() {
     cout << "Leading Search: " << leadingSearch << " (" << leadingSearchCount << " times)" << endl;
     cout << "Total Tax Revenue Generated: $" << totalTaxRevenue << endl;
     cout << "Average Market Value of Properties: $" << averageMarketValue << endl;
+    cout << percentageofmaxsearch << "% of searches are " << leadingSearch << " Search" << endl;
 }
+
+// method to calculate the total Tax revenue on all properties in the Property List
+
 double PropertyManager::calculateTotalTaxRevenue() {
     if (propertyMap.empty()) {
         return 0.0;
@@ -586,7 +640,7 @@ int PropertyManager::calculateTotalSearches() {
     return totalSearches;
 }
 
-
+// Method to Calculate the Average market value of all properties in the Property list
 
 double PropertyManager::calculateAverageMarketValue() {
     if (propertyMap.empty()) {
@@ -605,6 +659,8 @@ double PropertyManager::calculateAverageMarketValue() {
 
     return averageMarketValue;
 }
+
+//Method to Handle admin's Property Management functions
 
 void PropertyManager ::propertyManagerAdmin() {
     PropertyManager manager;
@@ -960,28 +1016,28 @@ void PropertyManager::propertyManagerUser() {
 
 
 // Function to read property data from file
-void PropertyManager::readPropertyDataFromFile( const std::string& propertyData) {
+void PropertyManager::readPropertyDataFromFile( const string& propertyData) {
     ifstream inFile(propertyData);
     if (!inFile.is_open()) {
-        std::cerr << "Error: Unable to open file for reading: " << propertyData << std::endl;
+        cerr << "Error: Unable to open file for reading: " << propertyData <<endl;
         return;
     }
 
     propertyMap.clear(); // Clear existing data before reading from file
 
-    std::string line;
+    string line;
     while (getline(inFile, line)) {
-        std::cout << "Reading line: " << line << std::endl; // Print the entire line
-        std::stringstream ss(line);
-        std::string token;
-        std::vector<std::string> tokens;
+        cout << "Reading line: " << line <<endl; // Print the entire line
+        stringstream ss(line);
+        string token;
+        vector<string> tokens;
 
         while (getline(ss, token, '|')) { // Split the line by '|'
             tokens.push_back(token);
         }
 
         if (tokens.size() != 11) {
-            std::cerr << "Error: Invalid data format in file: " << propertyData << std::endl;
+            cerr << "Error: Invalid data format in file: " << propertyData <<endl;
             continue;
         }
 
@@ -1003,9 +1059,9 @@ void PropertyManager::readPropertyDataFromFile( const std::string& propertyData)
 
 // Function to write property data to file
 void PropertyManager::writePropertyDataToFile(const string& propertyData) {
-    std::ofstream outFile(propertyData);
+    ofstream outFile(propertyData);
     if (!outFile.is_open()) {
-        std::cerr << "Error: Unable to open file for writing: " << propertyData << std::endl;
+        cerr << "Error: Unable to open file for writing: " << propertyData <<endl;
         return;
     }
 
@@ -1031,14 +1087,14 @@ void PropertyManager::writePropertyDataToFile(const string& propertyData) {
 // Function to write Searches data to file
 
 void PropertyManager::writeSearchDataToFile(const string& searchDataFile) {
-    std::ofstream outFile(searchDataFile);
+    ofstream outFile(searchDataFile);
     if (!outFile.is_open()) {
-        std::cerr << "Error: Unable to open file for writing: " << searchDataFile << std::endl;
+        cerr << "Error: Unable to open file for writing: " << searchDataFile <<endl;
         return;
     }
 
     for (const auto& entry : searchFrequency) {
-        outFile << entry.first << "|" << entry.second << std::endl;
+        outFile << entry.first << "|" << entry.second <<endl;
     }
 
     outFile.close();
@@ -1046,27 +1102,27 @@ void PropertyManager::writeSearchDataToFile(const string& searchDataFile) {
 
 // Function to read Searches data to file
 
-void PropertyManager::readSearchDataFromFile(const std::string& searchDataFile) {
-    std::ifstream inFile(searchDataFile);
+void PropertyManager::readSearchDataFromFile(const string& searchDataFile) {
+    ifstream inFile(searchDataFile);
     if (!inFile.is_open()) {
-        std::cerr << "Error: Unable to open file for reading: " << searchDataFile << std::endl;
+        cerr << "Error: Unable to open file for reading: " << searchDataFile <<endl;
         return;
     }
 
     searchFrequency.clear(); // Clear existing search frequency data before reading from file
 
-    std::string line;
+    string line;
     while (getline(inFile, line)) {
-        std::cout << "Reading line: " << line << std::endl; // Print the entire line
-        std::stringstream ss(line);
-        std::string key;
+        cout << "Reading line: " << line <<endl; // Print the entire line
+        stringstream ss(line);
+        string key;
         int frequency;
 
-        if (std::getline(ss, key, '|') && ss >> frequency) {
+        if (getline(ss, key, '|') && ss >> frequency) {
             searchFrequency[key] = frequency;
         }
         else {
-            std::cerr << "Error: Invalid data format in file: " << searchDataFile << std::endl;
+            cerr << "Error: Invalid data format in file: " << searchDataFile <<endl;
         }
     }
 
@@ -1075,10 +1131,10 @@ void PropertyManager::readSearchDataFromFile(const std::string& searchDataFile) 
 
 // function for writing the unapproved properties to the file
 
-void PropertyManager::writeUnapprovedPropertiesToFile(const std::string& unapprovedDataFile) {
-    std::ofstream outFile(unapprovedDataFile);
+void PropertyManager::writeUnapprovedPropertiesToFile(const string& unapprovedDataFile) {
+    ofstream outFile(unapprovedDataFile);
     if (!outFile.is_open()) {
-        std::cerr << "Error: Unable to open file for writing: " << unapprovedDataFile << std::endl;
+        cerr << "Error: Unable to open file for writing: " << unapprovedDataFile <<endl;
         return;
     }
 
@@ -1094,7 +1150,7 @@ void PropertyManager::writeUnapprovedPropertiesToFile(const std::string& unappro
             << property.getPropertyLocation().City << "|"
             << property.getPropertyLocation().State << "|"
             << property.getPrice() << "|"
-            << property.getPropertyType() << std::endl;
+            << property.getPropertyType() <<endl;
 
         unApprovedProperties.pop();
     }
@@ -1104,10 +1160,10 @@ void PropertyManager::writeUnapprovedPropertiesToFile(const std::string& unappro
 
 // A function for reading the unapproved propeties from file back to the Queue
 
-void PropertyManager::readUnapprovedPropertiesFromFile(const std::string& unapprovedDataFile) {
-    std::ifstream inFile(unapprovedDataFile);
+void PropertyManager::readUnapprovedPropertiesFromFile(const string& unapprovedDataFile) {
+    ifstream inFile(unapprovedDataFile);
     if (!inFile.is_open()) {
-        std::cerr << "Error: Unable to open file for reading: " << unapprovedDataFile << std::endl;
+        cerr << "Error: Unable to open file for reading: " << unapprovedDataFile <<endl;
         return;
     }
 
@@ -1116,19 +1172,19 @@ void PropertyManager::readUnapprovedPropertiesFromFile(const std::string& unappr
         unApprovedProperties.pop();
     }
 
-    std::string line;
+    string line;
     while (getline(inFile, line)) {
-        std::cout << "Reading line: " << line << std::endl; // Print the entire line
-        std::stringstream ss(line);
-        std::string token;
-        std::vector<std::string> tokens;
+        cout << "Reading line: " << line <<endl; // Print the entire line
+        stringstream ss(line);
+        string token;
+        vector<string> tokens;
 
         while (getline(ss, token, '|')) { // Split the line by '|'
             tokens.push_back(token);
         }
 
         if (tokens.size() != 11) {
-            std::cerr << "Error: Invalid data format in file: " << unapprovedDataFile << std::endl;
+            cerr << "Error: Invalid data format in file: " << unapprovedDataFile <<endl;
             continue;
         }
 
