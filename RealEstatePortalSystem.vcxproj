@@ -131,6 +131,7 @@
     <ClInclude Include="Property.h" />
     <ClInclude Include="PropertyManager.h" />
     <ClInclude Include="User.h" />
+    <ClInclude Include="welcome.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Admin.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="Property.cpp" />
     <ClCompile Include="PropertyManager.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="welcome.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,4 +1,5 @@
 #include "Admin.h"
+#include "welcome.h"
 #include "User.h"
 #include "PropertyManager.h"
 #include <iostream>
@@ -125,7 +126,7 @@ bool Admin::loginAdmin() {
         return false;
     }
 }
-//Function that displays only User's accessed options
+
 void Admin::admin_menu() {
 
     bool exitFlag = false;
@@ -147,7 +148,7 @@ void Admin::admin_menu() {
         switch (choice) {
             case 1:
                  system("cls");
-                 Admin::updateAdminInfo(password, lname, lname);
+                 Admin::admin_personal_info(username);
                  break;
             case 2:
                  system("cls");
@@ -155,6 +156,7 @@ void Admin::admin_menu() {
                  break;
             case 3:
                  system("cls");
+                 user_management();
                  break;
 
             case 4:
@@ -171,9 +173,58 @@ void Admin::admin_menu() {
         }
     }
 }
+void Admin::admin_personal_info(const string& username) {
+
+    cout << "Username:" << username << '\t';
+    cout << "First Name:" << fname << '\t';
+    cout << "Last Name:" << lname << endl;
 
 
-bool Admin::updateAdminInfo(const string& newPassword, const string& newFirstName, const string& newLastName) {
+    int answer;
+    cout << "Do you want to update info? " << endl;
+    cout << "1: Yes " << endl;
+    cout << "2: No " << endl;
+
+    cin >> answer;
+    switch (answer) {
+    case 1:
+    { string newPassword, newFirstName, newLastName, hashpassword;
+
+    cout << "Enter new password: ";
+    cin >> newPassword;
+    hashpassword = hash_djb2(newPassword);
+
+    cout << "Enter new first name: ";
+    cin >> newFirstName;
+
+    cout << "Enter new last name: ";
+    cin >> newLastName;
+
+    // Call updateInfo function with the collected input
+    if (admin_updateInfo(hashpassword, newFirstName, newLastName)) {
+        system("cls");
+        cout << "User information updated successfully!" << endl;
+    }
+    else {
+        cout << "Failed to update user information. Please try again." << endl;
+    }
+    }
+    break;
+    case 2:
+        system("cls");
+
+        break;
+
+    default: {
+        system("cls");
+        cout << "Invalid choice, try again!" << endl;
+        admin_personal_info(username);
+    }
+    }
+}
+bool Admin::admin_updateInfo(const string& newPassword, const string& newFirstName, const string& newLastName) {
+
+
     if (newPassword.empty() && newFirstName.empty() && newLastName.empty()) {
         // No updates provided
         return false;
@@ -181,41 +232,8 @@ bool Admin::updateAdminInfo(const string& newPassword, const string& newFirstNam
     this->password = newPassword.empty() ? password : newPassword;
     this->fname = newFirstName.empty() ? fname : newFirstName;
     this->lname = newLastName.empty() ? lname : newLastName;
+    admins[username] = Admin(username, newPassword, newFirstName, newLastName, isAdmin);
     return true;
-}
-
-void welcome_page_admin() {
-    bool exitFlag = false;
-
-    while (!exitFlag) {
-        cout << "\t\t\t***Admin Portal***\n" << endl;
-        cout << "\t\t\t1. Sign Up" << endl;
-        cout << "\t\t\t2. Login" << endl;
-        cout << "\t\t\t3. Exit" << endl;
-
-        int choice;
-        cin >> choice;
-
-        switch (choice) {
-           case 1:{
-            system("cls");
-            Admin::signupAdmin();
-            welcome_page_admin();
-            break;
-            }
-           case 2:{
-            system("cls");
-            Admin::loginAdmin();
-            break;
-           }
-           case 3: {
-            // Exit
-            exitFlag = true;
-            cout << "Exiting..." << endl;
-            break;
-           }
-        }
-    }
 }
 void Admin::createNewAdmin() {
     string username, password, fname, lname;
@@ -246,3 +264,90 @@ void Admin::createNewAdmin() {
     cout << "New admin created successfully!" << endl;
     welcome_page_admin();
 }
+
+void Admin::user_management() {
+    char answer = 'y';
+    int choice;
+    cout << "User Management Portol " << endl;
+    cout << "1: Create new users " << endl;
+    cout << "2: Update user account " << endl;
+    cout << "3: Exit " << endl;
+
+    cin >> choice;
+    switch (choice) {
+    case 1:        
+        while (answer == 'y' || answer == 'Y') {
+            User::signup();
+            cout << "Do you want to add more? (y / n) " << endl;
+            cin >> answer;
+        }
+        system("cls");
+        user_management();
+        break;
+    case 2:   
+    {
+        system("cls");
+        update_user_info();
+        break;
+    }
+    
+    
+    case 3:
+        system("cls");
+        admin_menu();
+        break;
+    default: {
+        system("cls");
+        cout << "Invalid choice, try again!" << endl;
+        user_management();
+    }
+    }
+}
+
+int Admin::countAdmins() {
+    int adminsCount = 0;
+    for (const auto& pair : admins) {
+        const Admin& user = pair.second;
+        // Check if the user is not an admin
+        if (!user.isAdminUser()) {
+            adminsCount++;
+        }
+    }
+    return adminsCount;
+}
+
+void welcome_page_admin() {
+    bool exitFlag = false;
+
+    while (!exitFlag) {
+        cout << "\t\t\t***Admin Portal***\n" << endl;
+        cout << "\t\t\t1. Sign Up" << endl;
+        cout << "\t\t\t2. Login" << endl;
+        cout << "\t\t\t3. Exit" << endl;
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+           case 1:{
+            system("cls");
+            Admin::signupAdmin();
+            welcome_page_admin();
+            break;
+            }
+           case 2:{
+            system("cls");
+            Admin::loginAdmin();
+            break;
+           }
+           case 3: {
+            // Exit
+            exitFlag = true;
+            system("cls");
+            welcome_page();
+            break;
+           }
+        }
+    }
+}
+

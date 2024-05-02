@@ -1,4 +1,5 @@
 #include "User.h"
+#include "welcome.h"
 #include "PropertyManager.h"
 #include <iostream>
 #include <fstream>
@@ -23,6 +24,16 @@ string User::getFname()const {
 }
 string User::getLname()const {
     return lname;
+}
+void User::setPassword(const string& newPassword) {
+    password = newPassword;
+}
+void User::setFname(const string& newFname) {
+    fname = newFname;
+
+}
+void User::setLname(const string& newLname) {
+    lname = newLname;
 }
 bool User::isAdminUser() const {
     return isAdmin;
@@ -145,7 +156,7 @@ void User::user_menu() {
         switch (choices) {
             case 1: {
                   system("cls");
-                  User::updateInfo(password, lname, lname);
+                  user_personal_info(username);
                   break;
             }
             case 2: {
@@ -164,8 +175,13 @@ void User::user_menu() {
     }
 }
 
-// Function to display user choices from the options provided above
-/*void choices(const string& username) {
+// Function to display users personal info for user to update
+void User::user_personal_info(const string& username) {
+
+    cout << "Username:" << username << '\t';
+    cout << "First Name:" << fname << '\t';
+    cout << "Last Name:" << lname << endl;
+
 
     int answer;
     cout << "Do you want to update info? " << endl;
@@ -175,21 +191,43 @@ void User::user_menu() {
     cin >> answer;
     switch (answer) {
     case 1:
-        update_info(username);
+    { string newPassword, newFirstName, newLastName, hashpassword;
+
+    cout << "Enter new password: ";
+    cin >> newPassword;
+    hashpassword = hash_djb2(newPassword);
+
+    cout << "Enter new first name: ";
+    cin >> newFirstName;
+
+    cout << "Enter new last name: ";
+    cin >> newLastName;
+
+    // Call updateInfo function with the collected input
+    if (updateInfo(hashpassword, newFirstName, newLastName)) {
+        system("cls");
+        cout << "User information updated successfully!" << endl;
+    }
+    else {
+        cout << "Failed to update user information. Please try again." << endl;
+    }
+    }
         break;
     case 2:
         system("cls");
-        user_menu(username);
+        
         break;
 
     default: {
         system("cls");
         cout << "Invalid choice, try again!" << endl;
-        choices(username);
+        user_personal_info(username);
     }
     }
-}*/
+}
 bool User::updateInfo(const string& newPassword, const string& newFirstName, const string& newLastName) {
+
+
     if (newPassword.empty() && newFirstName.empty() && newLastName.empty()) {
         // No updates provided
         return false;
@@ -197,9 +235,68 @@ bool User::updateInfo(const string& newPassword, const string& newFirstName, con
     this->password = newPassword.empty() ? password : newPassword;
     this->fname = newFirstName.empty() ? fname : newFirstName;
     this->lname = newLastName.empty() ? lname : newLastName;
+    users[username] = User(username, newPassword, newFirstName, newLastName, isAdmin);
     return true;
 }
+//Function to count total number of users
+int User::countUsers() {
+    int userCount = 0;
+    for (const auto& pair : users) {
+        const User& user = pair.second;
+        // Check if the user is not an admin
+        if (!user.isAdminUser()) {
+            userCount++;
+        }
+    }
+    return userCount;
+}
+//Function for all the users and for the admin to update a particular user's info
+bool update_user_info() {
+    // Display list of all users
+    cout << "List of all users:" << endl;
+    for (const auto& pair : users) {
+        const User& user = pair.second;
+        cout << "Username: " << user.getUsername() << endl;
+        cout << "First Name: " << user.getFname() << endl;
+        cout << "Last Name: " << user.getLname() << endl;
+        cout << endl;
+    }
 
+    // Input the username of the user to update
+    string username;
+    cout << "Enter the username of the user you want to update: ";
+    cin >> username;
+
+    // Check if the entered username exists
+    if (users.find(username) != users.end()) {
+        // Input for new information
+        string newPassword, hashpassword, newFirstName, newLastName;
+        cout << "Enter new password: ";
+        cin >> newPassword;
+        hashpassword = hash_djb2(newPassword);
+        cout << "Enter new first name: ";
+        cin >> newFirstName;
+        cout << "Enter new last name: ";
+        cin >> newLastName;
+
+        if (users.find(username) == users.end()) {
+            cout << "User not found." << endl;
+            return false;
+        }
+
+        // Update user information
+        users[username].setPassword(hashpassword);
+        users[username].setFname(newFirstName);
+        users[username].setLname(newLastName);
+
+        cout << "User information updated successfully!" << endl;
+        return true;
+    }
+    else {
+        cout << "User not found." << endl;
+    }
+}
+//Main welcome page for user with signup and login options
 void welcome_page_user() {
     
     int choice;
@@ -229,7 +326,7 @@ void welcome_page_user() {
             // Exit
             system("cls");
             exitFlag = true;
-            //welcome_page();
+            welcome_page();
             break;
            }
            default:{
@@ -240,6 +337,7 @@ void welcome_page_user() {
         }
     }
 }
+//Funtion used  to encrypt users' and admins' passwords
 string hash_djb2(const  string& str) {
     unsigned long hash = 5381;
     for (char c : str) {

@@ -42,11 +42,18 @@ public:
 	//User menu after log in
 	void admin_menu();
 	//Update user info
-	bool updateAdminInfo(const string& newPassword, const string& newFname, const string& newLname);
+	void admin_personal_info(const string& username);
+	//Admin to update his personal info
+	bool admin_updateInfo(const string& newPassword, const string& newFname, const string& newLname);
 	//Admin creating a new admin
 	void createNewAdmin();
+	//User management functions
+	void user_management();
+	//Function to count total number of  admins
+	int countAdmins();
 
 };
+//Main welcome page for admins with signup and login options
 void welcome_page_admin();
 
 #endif
