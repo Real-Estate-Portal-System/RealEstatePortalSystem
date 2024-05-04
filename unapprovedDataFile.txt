@@ -1,0 +1,3 @@
+1011|2008|3|180000|150.89|Brilliant|3rd|Ohio|Ohio|30000|Villa
+1012|2011|7|189000|90.585|Good|1st|Eanfil|Minsola|9000|Condo
+1015|1988|4|175000|185|Excellent|10th|Royal City|Great Nation|30000|Palace

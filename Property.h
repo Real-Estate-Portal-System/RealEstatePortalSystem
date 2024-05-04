@@ -20,13 +20,16 @@ private:
     std::string propertyType;
 
 public:
+    // default constructor
     Property();
+
+    //Parameterised constructor
     Property(int propertyNumber, std::string YearBuilt, int bedRoomNumber, double marketValue,
         double squareFootage, std::string conditionState,
         std::string proStreet, std::string proCity, std::string proState,
         double price, std::string propertyType);
+    
     // Setter Methods
-
     void setBedRoomNumber(int bedRoomNumber);
     void setMarketValue(double marketValue);
     void setConditionState(std::string conditionState);

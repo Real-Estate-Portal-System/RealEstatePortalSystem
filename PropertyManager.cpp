@@ -1,60 +1,65 @@
-#include "PropertyManager.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <locale> 
-#include<queue>
-
+#include "PropertyManager.h" // Includes the header file for the PropertyManager class.
+#include "User.h" // Includes the header file for the User class.
+#include "Admin.h" // Includes the header file for the Admin class.
+#include <iostream> // Includes the input/output stream library.
+#include <iomanip> // Includes the input/output manipulators library for formatting.
+#include <fstream> // Includes the file stream library for file input/output operations.
+#include <sstream> // Includes the string stream library for string input/output operations.
+#include <locale> // Includes the localization library for formatting numeric and monetary information.
+#include <queue> // Includes the queue library for implementing queue data structure.
 
 using namespace std;
 
+// Stores approved properties
 static std::unordered_map<int, Property> propertyMap;
+
 // Additional member variables for tracking statistics
 int searchCount;
 static std::unordered_map<std::string, int> searchFrequency;
-//Stores Unapproved properties
+
+// Stores unapproved properties
 static std::queue<Property> unApprovedProperties;
 
-// Default constructor
+// Default constructor for PropertyManager
 PropertyManager::PropertyManager() {
-    searchCount = 0;
+    searchCount = 0; // Initializes the search count to zero.
 }
 
 
-
-// Method to add a new property to the property map
-void PropertyManager::addProperty(int propertyNumber, const string& builtYear, int numberOfBedrooms, double marketValue,
-    double squareFootage, const string& condition, const string& street,
+// Method to add a new property to the property map.
+void PropertyManager::addProperty(int propertyNumber, const string& builtYear, int numberOfBedrooms,
+    double marketValue, double squareFootage, const string& condition, const string& street,
     const string& city, const string& state, double price, const string& type) {
 
-    //We Check if the property number already exists in the propertyMap
+    // Check if the property number already exists in the propertyMap.
     if (propertyMap.find(propertyNumber) != propertyMap.end()) {
-        cout << "The Property Number " << propertyNumber << " Already Exists in the System" << endl;
+        system("cls");
+        cout << "The Property Number " << propertyNumber << " Already Exists in the System." << endl;
     }
     else {
-        // We Add the property to the property Map
+        // Add the property to the property Map.
         Property newProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
             condition, street, city, state, price, type);
         propertyMap[propertyNumber] = newProperty;
-        cout << "Property with Property Number " << propertyNumber << " Added Successfully" << endl;
+        system("cls");
+        cout << "Property with Property Number " << propertyNumber << " Added Successfully." << endl;
     }
 }
 
-// Method for users to add propert(y)ies to the Queue for approval. 
-
+// Method for users to add properties to the Queue for approval.
 void PropertyManager::addUnApprovedProperty(int propertyNumber, const string& builtYear, int numberOfBedrooms, double marketValue,
     double squareFootage, const string& condition, const string& street,
     const string& city, const string& state, double price, const string& type) {
 
-    // We Create a temporary queue to hold unapproved properties while checking for duplicates
+    // Create a temporary queue to hold unapproved properties while checking for duplicates.
     std::queue<Property> tempQueue;
 
-    // We Check if the property number already exists in the unapproved properties queue
+    // Check if the property number already exists in the unapproved properties queue.
     bool propertyExists = false;
     while (!unApprovedProperties.empty()) {
         Property& property = unApprovedProperties.front();
         if (property.getPropertyNumber() == propertyNumber) {
-            cout << "The Property Number " << propertyNumber << " is already in the unapproved properties queue." << endl;
+            cout << "\nThe Property Number " << propertyNumber << " is already in the unapproved properties queue.\n" << endl;
             propertyExists = true;
             break;
         }
@@ -62,67 +67,69 @@ void PropertyManager::addUnApprovedProperty(int propertyNumber, const string& bu
         unApprovedProperties.pop();
     }
 
-    //We  Push back properties from the temporary queue to the original queue
+    // Push back properties from the temporary queue to the original queue.
     while (!tempQueue.empty()) {
         unApprovedProperties.push(tempQueue.front());
         tempQueue.pop();
     }
 
-    // If the property doesn't exist in the unapproved properties queue,And we print a message
+    // If the property doesn't exist in the unapproved properties queue, print a message.
     if (!propertyExists) {
-        cout << "The Property Number " << propertyNumber << " Doesn't Exist in the System" << endl;
+        cout << "\nThe Property Number " << propertyNumber << " Doesn't Exist in the System.Therefore," << endl;
     }
 
-    //We Check if the property number already exists in the propertyMap
+    // Check if the property number already exists in the propertyMap.
     if (propertyMap.find(propertyNumber) != propertyMap.end()) {
-        cout << "The Property Number " << propertyNumber << " Already Exists in the System" << endl;
+        system("cls");
+        cout << "\nThe Property Number " << propertyNumber << " Already Exists in the System." << endl;
     }
     else {
-        // We Add the property to the unapproved properties queue
+        // Add the property to the unapproved properties queue.
         Property newProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
             condition, street, city, state, price, type);
         unApprovedProperties.push(newProperty);
-        cout << "Property with Property Number " << propertyNumber << " Added Successfully To the List and Waiting Approval" << endl;
+        cout << " The Property is Added Successfully To the List and Waiting Approval.\n" << endl;
     }
 }
 
-
-// Method for approving unapproved properties in the queue to the property list in the map
+// Method for approving unapproved properties in the queue to the property list in the map.
 void PropertyManager::approveProperties() {
     Property propertyToApprove;
     queue<Property> temp;
 
-    // we check if the queue is empty.
+    // Check if the queue is empty.
     if (unApprovedProperties.empty()) {
         cout << "The Property Queue is Empty. Please wait until new properties are added." << endl;
     }
     else {
-        while (!unApprovedProperties.empty()) {// while there are still properties in the queue
-            propertyToApprove = unApprovedProperties.front();// pop the first property
-            displayPropertyDetails(propertyToApprove);// display it
+        while (!unApprovedProperties.empty()) {// While there are still properties in the queue.
+            propertyToApprove = unApprovedProperties.front();// Pop the first property.
+            displayPropertyDetails(propertyToApprove);// Display it.
             cout << "**************************************************\n" << endl;
-            unApprovedProperties.pop();// pop it out of the queue
+            unApprovedProperties.pop();// Pop it out of the queue.
             cout << "Would you like to add this property to the Property List? (Yes: 1 / No: 2): ";
             int choice;
-         
+
             while (!(cin >> choice) || choice < 1 || choice > 2 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid choice. Please enter a number between 1 and 2: ";
+                cout << "Invalid choice. Please enter 1 or 2: ";
             }
 
-            if (choice == 1) {// we add the property to the list
+            if (choice == 1) {// Add the property to the list.
+                system("cls");
                 propertyMap[propertyToApprove.getPropertyNumber()] = propertyToApprove;
                 cout << "Property with Property Number " << propertyToApprove.getPropertyNumber() << " added successfully." << endl;
             }
-            else if (choice == 2) {// we push  the property to a temporary queue
+            else if (choice == 2) {// Push the property to a temporary queue.
+                system("cls");
+                cout << "Property with Property Number " << propertyToApprove.getPropertyNumber() << " not Approved!!" << endl;
                 temp.push(propertyToApprove);
             }
         }
     }
 
-
-    // we Push back properties that were not approved back into the unapproved queue
+    // Push back properties that were not approved back into the unapproved queue.
     while (!temp.empty()) {
         unApprovedProperties.push(temp.front());
         temp.pop();
@@ -130,8 +137,7 @@ void PropertyManager::approveProperties() {
 }
 
 
-
-// Method to delete a property from the property map
+// Method to delete a property from the property map.
 void PropertyManager::deleteProperty(int propertyNumber) {
     int choice;
     if (!propertyMap.empty()) {
@@ -139,20 +145,22 @@ void PropertyManager::deleteProperty(int propertyNumber) {
         if (it != propertyMap.end()) {
             Property pro = propertyMap.at(propertyNumber);
             propertyMap.erase(it);
-            cout << "The Property with number " << propertyNumber << " has been deleted Successfully." << endl;
-            cout << "Wound you like to Undo Deletion? Press Yes(1)/No(2): ";
+            cout << "The Property with number " << propertyNumber << " has been deleted successfully." << endl;
+            system("cls");
+            cout << "Would you like to undo the deletion? Press Yes(1)/No(2): ";
+            // User input validation.
             while (!(cin >> choice) || choice < 1 || choice > 2 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid choice. Please enter a number between 1 and 2: ";
+                cout << "Invalid choice. Please enter 1 or 2: ";
             }
             if (choice == 1) {
                 propertyMap[propertyNumber] = pro;
-                cout << "Deletion Undone!!" << endl;
+                cout << "Deletion undone!!" << endl;
             }
         }
         else {
-            cout << "The Property Number " << propertyNumber << " Does Not Exist in the Property List" << endl;
+            cout << "The Property Number " << propertyNumber << " Does Not Exist in the Property List." << endl;
         }
     }
     else {
@@ -160,9 +168,7 @@ void PropertyManager::deleteProperty(int propertyNumber) {
     }
 }
 
-
-
-// Method to display details of a property
+// Method to display details of a property.
 void PropertyManager::displayPropertyDetails(const Property& property) {
     cout << "\n\t\tProperty Details\n";
     cout << "Property Number: " << property.getPropertyNumber() << endl;
@@ -178,31 +184,29 @@ void PropertyManager::displayPropertyDetails(const Property& property) {
         << property.getPropertyLocation().State << endl;
 }
 
-
-// compare properties method.
-
+// Compare properties method.
 void PropertyManager::compareProperties() {
     int numPropertiesToCompare;
 
-    //We prompt the user to enter how many properties they want to compare
+    // Prompt the user to enter how many properties they want to compare.
     cout << "Enter the number of properties you want to compare (up to 4): ";
-    cin >> numPropertiesToCompare;
-
-    if (numPropertiesToCompare <= 0 || numPropertiesToCompare > 4) {
-        cout << "Invalid number of properties. Please enter a number between 1 and 4." << endl;
-        return;
+    // Validate the user input.
+    while (!(cin >> numPropertiesToCompare) || numPropertiesToCompare < 2 || numPropertiesToCompare > 4 || cin.peek() != '\n' || cin.peek() == '.') {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid number of properties. Please enter a number between 2 and 4." << endl;
     }
 
     std::vector<int> propertyNumbers(numPropertiesToCompare);
 
-    // Prompt the user to enter property numbers
+    // Prompt the user to enter property numbers.
     cout << "Enter " << numPropertiesToCompare << " property numbers" << endl;
     for (int i = 0; i < numPropertiesToCompare; ++i) {
         cin >> propertyNumbers[i];
     }
 
-    // Display details of each property
-    std::vector<Property> propertiesToCompare;
+    // Display details of each property.
+    vector<Property> propertiesToCompare;
     for (int i = 0; i < numPropertiesToCompare; ++i) {
         auto it = propertyMap.find(propertyNumbers[i]);
         if (it != propertyMap.end()) {
@@ -213,15 +217,16 @@ void PropertyManager::compareProperties() {
         }
     }
 
+    system("cls");
+    cout << "\n\t\t*****Performing Comparison Portal*****" << endl;
 
-    cout << "\n\t\tPerforming comparison" << endl;
     for (int i = 0; i < propertiesToCompare.size(); ++i) {
-        std::cout << "\t\tProperty " << i + 1 << " Details" << endl;
+        cout << "\t\tProperty " << i + 1 << " Details\n\n" << endl;
         displayPropertyDetails(propertiesToCompare[i]);
-        cout << "-----------------------" << endl;
+        cout << "--------------------------------" << endl;
     }
 
-    // Compare market values
+    // Compare market values.
     double minMarketValue = propertiesToCompare[0].getMarketValue();
     double maxMarketValue = propertiesToCompare[0].getMarketValue();
     for (int i = 1; i < propertiesToCompare.size(); ++i) {
@@ -235,16 +240,13 @@ void PropertyManager::compareProperties() {
     }
 
     cout << "Minimum Market Value: " << minMarketValue << endl;
-    cout << "Maximum Market Value: " << maxMarketValue << endl;
+    cout << "Maximum Market Value: " << maxMarketValue << "\n\n" << endl;
 }
 
-
-
-
-// Method to search for properties based on various criteria
+// Method to search for properties based on various criteria.
 void PropertyManager::searchProperty() {
     int choice;
-
+    system("cls");
     do {
         cout << "\n\t\tSearch Options:\n";
         cout << "\t\t1. By Location\n";
@@ -258,24 +260,25 @@ void PropertyManager::searchProperty() {
         while (!(cin >> choice) || choice < 1 || choice > 6 || cin.peek() != '\n' || cin.peek() == '.') {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid choice. Please enter a number between 1 and 5: ";
+            cout << "Invalid choice. Please enter a number between 1 and 6: ";
         }
 
         switch (choice) {
         case 1: // Search by Location
         {
+            system("cls");
             string location;
             cout << "Enter the location to search: ";
             cin.ignore();
             getline(cin, location);
             searchByLocation(location);
             searchFrequency[location]++; // Increment frequency for the location
-            //searchCount++;
         }
         break;
 
         case 2: // Search by Price Range
         {
+            system("cls");
             double minPrice, maxPrice;
             cout << "Enter the minimum price: ";
             while (!(cin >> minPrice) || minPrice < 0) {
@@ -293,15 +296,14 @@ void PropertyManager::searchProperty() {
 
             searchByPriceRange(minPrice, maxPrice);
             searchFrequency["Price Range"]++; // Increment frequency for price range search
-            //searchCount++;
         }
-            break;
-        
+        break;
+
         case 3: // Search by Bedrooms
         {
+            system("cls");
             int minBedrooms, maxBedrooms;
             cout << "Enter the minimum number of bedrooms: ";
-
 
             while (!(cin >> minBedrooms) || minBedrooms < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
@@ -319,25 +321,23 @@ void PropertyManager::searchProperty() {
 
             searchByBedrooms(minBedrooms, maxBedrooms);
             searchFrequency["Bedrooms"]++; // Increment frequency for bedrooms search
-            //searchCount++;
         }
         break;
 
-
         case 4: // Search by Property Type
         {
+            system("cls");
             string type;
             cout << "Enter the property type to search: ";
             cin.ignore();
             getline(cin, type);
             searchByPropertyType(type);
             searchFrequency[type]++; // Increment frequency for property type search
-            //searchCount++;
         }
         break;
 
-
-        case 5: {// search by SquareFootage range
+        case 5: { // Search by SquareFootage range
+            system("cls");
             double minFootage, maxFootage;
             cout << "Enter the minimum SquareFootage: ";
             while (!(cin >> minFootage) || minFootage < 0) {
@@ -346,34 +346,31 @@ void PropertyManager::searchProperty() {
                 cout << "Invalid input. Please enter a non-negative number: ";
             }
 
-            cout << "Enter the maximum price: ";
+            cout << "Enter the maximum SquareFootage: ";
             while (!(cin >> maxFootage) || maxFootage < minFootage) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a number greater than  " << minFootage << ": ";
+                cout << "Invalid input. Please enter a number greater than " << minFootage << ": ";
             }
 
             searchBysquareFootageRange(minFootage, maxFootage);
             searchFrequency["SquareFootage Range"]++; // Increment frequency for squareFootage range search
-            //searchCount++;
-
         }
               break;
 
         case 6:
+            system("cls");
             cout << "Exiting search...\n";
             break;
         }
     } while (choice != 6);
 }
 
-
-
-// Method to edit a property's details
+// Method to edit a property's details.
 void PropertyManager::editProperty(int propertyNumber) {
-    string condition; // new condition
-    int numberOfBedrooms; // new number of bedrooms
-    double newMarketValue; // new market value
+    string condition; // New condition
+    int numberOfBedrooms; // New number of bedrooms
+    double newMarketValue; // New market value
 
     bool exitFlag = false;
 
@@ -385,6 +382,7 @@ void PropertyManager::editProperty(int propertyNumber) {
 
             while (!exitFlag) {
                 int choice;
+                cout << "\t\t\t****Property Editing Platform****" << endl;
                 cout << "\n\t\t 1. Edit The Property's Number of Bedrooms" << endl;
                 cout << "\t\t 2. Edit Condition of the Property" << endl;
                 cout << "\t\t 3. Edit Market Value of the Property" << endl;
@@ -399,6 +397,7 @@ void PropertyManager::editProperty(int propertyNumber) {
 
                 switch (choice) {
                 case 1: // Edit property's number of bedrooms
+                    system("cls");
                     cout << "Enter the new Number of Bedrooms: ";
                     while (!(cin >> numberOfBedrooms) || numberOfBedrooms < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                         cin.clear();
@@ -410,6 +409,7 @@ void PropertyManager::editProperty(int propertyNumber) {
                     break;
 
                 case 2: // Edit property's Condition
+                    system("cls");
                     cout << "Enter the new Condition of the Property: ";
                     cin >> condition;
                     foundProperty.setConditionState(condition);
@@ -417,6 +417,7 @@ void PropertyManager::editProperty(int propertyNumber) {
                     break;
 
                 case 3: // Edit property's Market Value
+                    system("cls");
                     cout << "Enter the new Market Value of the Property: ";
                     while (!(cin >> newMarketValue) || newMarketValue < 0) {
                         cin.clear();
@@ -428,6 +429,7 @@ void PropertyManager::editProperty(int propertyNumber) {
                     break;
 
                 case 4: // Exit the switch case when user enter choice 4
+                    system("cls");
                     exitFlag = true;
                     cout << "Thank You for Your Time, Goodbye!!" << endl;
                     break;
@@ -443,9 +445,7 @@ void PropertyManager::editProperty(int propertyNumber) {
     }
 }
 
-
-
-// Method to calculate taxes for a property
+// Method to calculate taxes for a property.
 double PropertyManager::calculateTaxes(int propertyNumber) {
     if (propertyMap.empty()) {
         throw runtime_error("No properties currently available in the rental portal system.");
@@ -459,132 +459,144 @@ double PropertyManager::calculateTaxes(int propertyNumber) {
     const Property& foundProperty = it->second;
 
     // Calculate taxes based on property's market value, square footage.
-    double taxRate = 0.02; // Example tax rate (2%)
+    double taxRate = 0.0002; // Tax rate (0.02%)
     double taxes = foundProperty.getMarketValue() * taxRate * foundProperty.getSquareFootage();
 
     return taxes;
 }
 
-
-
-// Method to search for properties by location
+// Method to search for properties by location.
 void PropertyManager::searchByLocation(const string& location) {
     int count = 0;
 
+    // Iterate through property map to find properties matching the specified location.
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         if (property.getPropertyLocation().City == location) {
-            displayPropertyDetails(property);
+            displayPropertyDetails(property); // Display property details if found.
             ++count;
         }
     }
 
+    // If no properties are found for the specified location, display a message.
     if (count == 0) {
         cout << "No properties found for the specified location.\n";
     }
 }
 
-// Method to search for properties within a price range
+// Method to search for properties within a price range.
 void PropertyManager::searchByPriceRange(double minPrice, double maxPrice) {
     int count = 0;
 
+    // Iterate through property map to find properties within the specified price range.
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         if (property.getPrice() >= minPrice && property.getPrice() <= maxPrice) {
-            displayPropertyDetails(property);
+            displayPropertyDetails(property); // Display property details if found.
             ++count;
         }
     }
 
+    // If no properties are found within the specified price range, display a message.
     if (count == 0) {
-        cout << "No properties found within the specified Price range.\n";
+        cout << "No properties found within the specified price range.\n";
     }
 }
 
-// Method to search for properties within a SquareFootage range
-
+// Method to search for properties within a SquareFootage range.
 void PropertyManager::searchBysquareFootageRange(double minFootage, double maxFootage) {
     int count = 0;
 
+    // Iterate through property map to find properties within the specified SquareFootage range.
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         if (property.getSquareFootage() >= minFootage && property.getSquareFootage() <= maxFootage) {
-            displayPropertyDetails(property);
+            displayPropertyDetails(property); // Display property details if found.
             ++count;
         }
     }
 
+    // If no properties are found within the specified SquareFootage range, display a message.
     if (count == 0) {
         cout << "No properties found within the specified SquareFootage range.\n";
     }
-
 }
 
-
-
-
-
-// Method to search for properties by number of bedrooms
+// Method to search for properties by number of bedrooms.
 void PropertyManager::searchByBedrooms(int minBedrooms, int maxBedrooms) {
     int count = 0;
 
+    // Iterate through property map to find properties within the specified number of bedrooms.
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         int bedrooms = property.getBedRoomNumber();
         if (bedrooms >= minBedrooms && bedrooms <= maxBedrooms) {
-            displayPropertyDetails(property);
+            displayPropertyDetails(property); // Display property details if found.
             ++count;
         }
     }
 
+    // If no properties are found within the specified number of bedrooms, display a message.
     if (count == 0) {
         cout << "No properties found within the specified number of bedrooms.\n";
     }
 }
 
-// Method to search for properties by property type
+// Method to search for properties by property type.
 void PropertyManager::searchByPropertyType(const string& type) {
     int count = 0;
 
+    // Iterate through property map to find properties of the specified type.
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         if (property.getPropertyType() == type) {
-            displayPropertyDetails(property);
+            displayPropertyDetails(property); // Display property details if found.
             ++count;
         }
     }
 
+    // If no properties are found of the specified type, display a message.
     if (count == 0) {
         cout << "No properties found of the specified type.\n";
     }
 }
 
-// Method to get a property by its number
+// Method to get a property by its number.
 Property* PropertyManager::getPropertyByNumber(int propertyNumber) {
     auto it = propertyMap.find(propertyNumber);
     if (it != propertyMap.end()) {
-        return &(it->second);
+        return &(it->second); // Return pointer to property if found.
     }
     else {
-        cout << "The property with number " << propertyNumber << " does not exist." << endl;
+        cout << "The property with number " << propertyNumber << " does not exist." << endl; // Display error message if property not found.
         return nullptr;
     }
 }
 
-// Method that generates reports 
 
+// Method that generates reports.
 void PropertyManager::generateReport() {
-    // Total number of properties added
-    int totalProperties = propertyMap.size();
 
-    // Total number of searches made
+    // Initialize user and admin objects.
+    User users;
+    Admin admins;
+
+    // Total number of properties.
+    int totalProperties = propertyMap.size();
+    // Total number of searches made.
     int totalSearches = calculateTotalSearches();
+    // Total tax generated on all properties.
     double totalTaxRevenue = calculateTotalTaxRevenue();
+    // Average market value of all properties.
     double averageMarketValue = calculateAverageMarketValue();
+    // Total number of users.
+    int totalUsers = users.countUsers();
+    // Total number of admins.
+    int totalAdmins = admins.countAdmins();
+    // Initialize the percentage of the leading search.
     double percentageofmaxsearch = 0;
 
-
-    // Leading search (search with the highest frequency)
+    // Leading search (search with the highest frequency).
     string leadingSearch;
     int leadingSearchCount = 0;
     for (const auto& search : searchFrequency) {
@@ -593,106 +605,116 @@ void PropertyManager::generateReport() {
             leadingSearch = search.first;
         }
     }
-
+    // Percentage of leading search.
     percentageofmaxsearch = ((double)leadingSearchCount / (double)totalSearches) * 100;
 
-    cout << "----- Property Management Report -----" << endl;
-    cout << "Total Properties Added: " << totalProperties << endl;
-    cout << "Total Searches Made: " << totalSearches << endl;
-    cout << "Leading Search: " << leadingSearch << " (" << leadingSearchCount << " times)" << endl;
-    cout << "Total Tax Revenue Generated: $" << totalTaxRevenue << endl;
-    cout << "Average Market Value of Properties: $" << averageMarketValue << endl;
-    cout << percentageofmaxsearch << "% of searches are " << leadingSearch << " Search" << endl;
+    // Property Management Report.
+    cout << "----- Property Management Report -----\n\n";
+
+    cout << "The total number of users has grown to " << totalUsers << " users." << endl;
+    cout << "The system has " << totalAdmins << " admin(s) who contribute to a successful user experience." << endl;
+    cout << "The total number of properties has risen to " << totalProperties << " properties." << endl;
+    cout << "The total number of searches across the platform has reached a groundbreaking " << totalSearches << " searches." << endl;
+    cout << "The leading search, \"" << leadingSearch << "\", has amassed an outstanding " << leadingSearchCount << " searches." << endl;
+    cout << "Total tax revenue generated: $" << fixed << setprecision(3) << totalTaxRevenue << ". This number is expected to grow with the addition of new properties into the system." << endl;
+    cout << "Average market value of properties has settled at $" << setprecision(3) << averageMarketValue << "." << endl;
+    cout << setprecision(2) << percentageofmaxsearch << "% of searches are related to \"" << leadingSearch << "\".\n\n" << endl;
+
 }
 
-// method to calculate the total Tax revenue on all properties in the Property List
-
+// Method to calculate the total tax revenue on all properties in the property list.
 double PropertyManager::calculateTotalTaxRevenue() {
+    // Check if the property map is empty
     if (propertyMap.empty()) {
-        return 0.0;
+        return 0.0; // Return 0 if no properties exist
     }
 
     double totalTaxRevenue = 0.0;
 
+    // Iterate through each property in the property map and calculate the tax revenue for each property
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         double propertyTax = calculateTaxes(property.getPropertyNumber());
-        totalTaxRevenue += propertyTax;
+        totalTaxRevenue += propertyTax; // Add the calculated tax revenue to the total tax revenue
     }
 
-    return totalTaxRevenue;
+    return totalTaxRevenue; // Return the total tax revenue
 }
 
-
-// calculate total searches from the searchFrequancy Map
+// Method to calculate the total number of searches from the searchFrequency map.
 int PropertyManager::calculateTotalSearches() {
+    // Check if the search frequency map is empty
     if (searchFrequency.empty()) {
-        return 0; 
+        return 0; // Return 0 if no searches have been made
     }
 
     int totalSearches = 0;
 
+    // Iterate through each entry in the search frequency map and sum up the number of searches
     for (auto& entry : searchFrequency) {
         int search = entry.second;
-        totalSearches += search;
+        totalSearches += search; // Add the number of searches to the total searches
     }
 
-    return totalSearches;
+    return totalSearches; // Return the total number of searches
 }
 
-// Method to Calculate the Average market value of all properties in the Property list
 
+// Method to calculate the average market value of all properties in the property list.
 double PropertyManager::calculateAverageMarketValue() {
+    // Check if the property map is empty
     if (propertyMap.empty()) {
-        return 0.0;
+        return 0.0; // Return 0 if no properties exist
     }
 
     double totalMarketValue = 0.0;
 
-
+    // Iterate through each property in the property map and sum up their market values
     for (const auto& entry : propertyMap) {
         const Property& property = entry.second;
         totalMarketValue += property.getMarketValue();
     }
 
+    // Calculate the average market value by dividing the total market value by the number of properties
     double averageMarketValue = totalMarketValue / propertyMap.size();
 
-    return averageMarketValue;
+    return averageMarketValue; // Return the calculated average market value
 }
 
-//Method to Handle admin's Property Management functions
-
-void PropertyManager ::propertyManagerAdmin() {
+// Method to handle admin's Property Management functionalities.
+void PropertyManager::propertyManagerAdmin() {
     PropertyManager manager;
     Property property;
     bool exitFlag = false;
 
-    // for properties
-    string  propertyData = "PropertyData.txt";
-    manager.readPropertyDataFromFile( propertyData);
-
-    //for searches
+    // File paths for properties, searches, and unapproved properties
+    string propertyData = "PropertyData.txt";
     string searchDataFile = "searchDataFile.txt";
+    string unapprovedDataFile = "unapprovedDataFile.txt";
+
+    // Read property data from file
+    manager.readPropertyDataFromFile(propertyData);
+
+    // Read searches data from file
     manager.readSearchDataFromFile(searchDataFile);
 
-    //for unapproved properties
-
-    string unapprovedDataFile = "unapprovedDataFile.txt";
+    // Read unapproved property data from file
     manager.readUnapprovedPropertiesFromFile(unapprovedDataFile);
 
-    cout << "\t\t\t\tWelcome To The Property Manager \n\n" << endl;
+    system("cls");
+    cout << "\t\t***Welcome To The Property Manager PlatForm*** \n\n" << endl;
 
     while (!exitFlag) {
         int choice;
-        cout << "\t\tPress 1:To Add A Property" << endl;
-        cout << "\t\tPress 2:To Edit A Property Details" << endl;
-        cout << "\t\tPress 3:To Delete A Property" << endl;
-        cout << "\t\tPress 4:To Calculate Property Tax" << endl;
-        cout << "\t\tPress 5:To Display Property" << endl;
-        cout << "\t\tPress 6:To Search Property" << endl;
-        cout << "\t\tPress 7:To Generate Report" << endl;
-        cout << "\t\tPress 8:To Approve new Properties" << endl;
-        cout << "\t\tPress 9:To Exit Property Manager\n" << endl;
+        cout << "\t\t1. Add A Property" << endl;
+        cout << "\t\t2. Edit Property Details" << endl;
+        cout << "\t\t3. Delete A Property" << endl;
+        cout << "\t\t4. Calculate Property Tax" << endl;
+        cout << "\t\t5. Display Property Details" << endl;
+        cout << "\t\t6. Search for A Property" << endl;
+        cout << "\t\t7. Generate Report" << endl;
+        cout << "\t\t8. Approve New Properties" << endl;
+        cout << "\t\t9. Exit Property Manager Platform\n" << endl;
 
         cout << "Please Enter Your Choice: ";
         while (!(cin >> choice) || choice < 1 || choice > 9 || cin.peek() != '\n' || cin.peek() == '.') {
@@ -701,16 +723,17 @@ void PropertyManager ::propertyManagerAdmin() {
             cout << "Invalid choice. Please enter a number between 1 and 9: ";
         }
 
-
         cout << "**************************************************\n" << endl;
 
         switch (choice) {
 
         case 1: {
+            // Adding a new property
             int propertyNumber, numberOfBedrooms;
             double marketValue, squareFootage, price;
             string builtYear, condition, street, city, state, type;
 
+            system("cls");
             cout << "Enter The Property Number: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
@@ -726,7 +749,7 @@ void PropertyManager ::propertyManagerAdmin() {
             while (!(cin >> numberOfBedrooms) || numberOfBedrooms < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
+                cout << "Invalid input. Please enter a non-negative integer for the Number of Bedrooms: ";
             }
 
             cout << "Enter Property's Market Value: ";
@@ -736,11 +759,11 @@ void PropertyManager ::propertyManagerAdmin() {
                 cout << "Invalid input. Please enter a non-negative number for the Market Value: ";
             }
 
-            cout << "Enter Property's SquareFootage: ";
+            cout << "Enter Property's Square Footage: ";
             while (!(cin >> squareFootage) || squareFootage < 0) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a non-negative number for the SquareFootage: ";
+                cout << "Invalid input. Please enter a non-negative number for the Square Footage: ";
             }
 
             // Clear input buffer
@@ -769,12 +792,16 @@ void PropertyManager ::propertyManagerAdmin() {
             cout << "Enter Property's Type: ";
             getline(cin, type);
 
+            // Add the property
             manager.addProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
                 condition, street, city, state, price, type);
             cout << "**************************************************\n" << endl;
             break;
         }
+
         case 2: {
+            // Editing property details
+            system("cls");
             int propertyNumber;
             cout << "Enter the Property Number to edit: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
@@ -785,7 +812,11 @@ void PropertyManager ::propertyManagerAdmin() {
             manager.editProperty(propertyNumber);
             cout << "**************************************************\n" << endl;
             break;
-        }case 3: {
+        }
+
+        case 3: {
+            // Deleting a property
+            system("cls");
             int propertyNumber;
             cout << "Enter the Property Number to delete: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
@@ -797,7 +828,10 @@ void PropertyManager ::propertyManagerAdmin() {
             cout << "**************************************************\n" << endl;
             break;
         }
+
         case 4: {
+            // Calculating property taxes
+            system("cls");
             int propertyNumber;
             double taxes;
             cout << "Enter the Property Number to calculate taxes: ";
@@ -808,7 +842,7 @@ void PropertyManager ::propertyManagerAdmin() {
             }
             try {
                 taxes = manager.calculateTaxes(propertyNumber);
-                cout << "The Property Taxes: $" << taxes << endl;
+                cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
             }
             catch (const exception& e) {
                 cerr << "Error: " << e.what() << endl;
@@ -816,7 +850,10 @@ void PropertyManager ::propertyManagerAdmin() {
             cout << "**************************************************\n" << endl;
             break;
         }
+
         case 5: {
+            // Displaying property details
+            system("cls");
             int propertyNumber;
             cout << "Enter the Property Number to display details: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
@@ -831,67 +868,83 @@ void PropertyManager ::propertyManagerAdmin() {
             }
             break;
         }
-        case 6:
+
+        case 6: {
+            // Searching for properties
+            system("cls");
             manager.searchProperty();
             cout << "**************************************************\n" << endl;
             break;
+        }
 
-
-        case 7:
+        case 7: {
+            // Generating a report
+            system("cls");
             manager.generateReport();
             cout << "**************************************************\n" << endl;
             break;
+        }
 
-
-        case 8:
+        case 8: {
+            // Approving new properties
+            system("cls");
             manager.approveProperties();
             cout << "**************************************************\n" << endl;
             break;
+        }
 
-        case 9:
+        case 9: {
+            // Exiting Property Manager
+            system("cls");
             exitFlag = true;
-            cout << "Thanks for Your Time,Goodbye!!\n\n" << endl;
+            cout << "Thanks for Your Time, Goodbye!!\n\n" << endl;
             cout << "**************************************************\n" << endl;
-            manager.writePropertyDataToFile( propertyData);// writing property data back to property Hashmap
-            manager.writeSearchDataToFile(searchDataFile);// writing search data back to Search map
-            manager.writeUnapprovedPropertiesToFile(unapprovedDataFile);// writing unapproved property data  back to Queue
-            break;//break out of the switch case
+            // Write data to files before exiting
+            manager.writePropertyDataToFile(propertyData); // Write property data back to property HashMap
+            manager.writeSearchDataToFile(searchDataFile); // Write search data back to Search map
+            manager.writeUnapprovedPropertiesToFile(unapprovedDataFile); // Write unapproved property data back to Queue
+            break;
+        }
         }
     }
 }
 
+// Method to handle user's property management functionalities.
 void PropertyManager::propertyManagerUser() {
-
+    system("cls");
     PropertyManager manager;
     Property property;
     bool exitFlag = false;
 
-    //for property data
-    string  propertyData = "PropertyData.txt";
-    manager.readPropertyDataFromFile( propertyData);
-
-    // for searches data
+    // File paths for property data, searches data, and unapproved property data
+    string propertyData = "PropertyData.txt";
     string searchDataFile = "searchDataFile.txt";
+    string unapprovedDataFile = "unapprovedDataFile.txt";
+
+    // Read property data from file
+    manager.readPropertyDataFromFile(propertyData);
+
+    // Read searches data from file
     manager.readSearchDataFromFile(searchDataFile);
 
-    //  for unapproved property data
-    string unapprovedDataFile = "unapprovedDataFile.txt";
+    // Read unapproved property data from file
     manager.readUnapprovedPropertiesFromFile(unapprovedDataFile);
 
-    cout << "\t\t\t\tWelcome To The Property Manager \n\n" << endl;
+    cout << "\t\t***Welcome To The Property Manager PlatForm** \n\n" << endl;
     while (!exitFlag) {
         int choice;
-        cout << "\t\tPress 1:To Add A Property List" << endl;
-        cout << "\t\tPress 2:To Display Property" << endl;
-        cout << "\t\tPress 3:To Search Property" << endl;
-        cout << "\t\tPress 4:To Compare Up To 4 Properties" << endl;
-        cout << "\t\tPress 5:To Exit Property Manager\n" << endl;
+        cout << "\t\tPress 1: To Add A Property List" << endl;
+        cout << "\t\tPress 2: To Display Property" << endl;
+        cout << "\t\tPress 3: To Search Property" << endl;
+        cout << "\t\tPress 4: To Compare Up To 4 Properties" << endl;
+        cout << "\t\tPress 5: To Check Monetary Tax On Your Property" << endl;
+        cout << "\t\tPress 6: To Exit Property Manager\n" << endl;
 
         cout << "Please Enter Your Choice: ";
-        while (!(cin >> choice) || choice < 1 || choice > 5 || cin.peek() != '\n' || cin.peek() == '.') {
+        while (!(cin >> choice) || choice < 1 || choice > 6 || cin.peek() != '\n' || cin.peek() == '.') {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid choice. Please enter a number between 1 and 4: ";
+            cout << "Invalid choice. Please enter a number between 1 and 6: ";
         }
 
         cout << "**************************************************\n" << endl;
@@ -899,10 +952,14 @@ void PropertyManager::propertyManagerUser() {
         switch (choice) {
 
         case 1: {
+            system("cls");
+            // Adding a new property
             int propertyNumber, numberOfBedrooms;
             double marketValue, squareFootage, price;
             string builtYear, condition, street, city, state, type;
 
+            // Input property details from user
+            // Property number
             cout << "Enter The Property Number: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
@@ -910,17 +967,20 @@ void PropertyManager::propertyManagerUser() {
                 cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
             }
 
+            // Built year
             cout << "Enter Property's Built Year: ";
             cin.ignore();
             getline(cin, builtYear);
 
+            // Number of bedrooms
             cout << "Enter Property's Number of Bedrooms: ";
             while (!(cin >> numberOfBedrooms) || numberOfBedrooms < 0 || cin.peek() != '\n' || cin.peek() == '.') {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
+                cout << "Invalid input. Please enter a non-negative integer for the Number of Bedrooms: ";
             }
 
+            // Market value
             cout << "Enter Property's Market Value: ";
             while (!(cin >> marketValue) || marketValue < 0) {
                 cin.clear();
@@ -928,19 +988,20 @@ void PropertyManager::propertyManagerUser() {
                 cout << "Invalid input. Please enter a non-negative number for the Market Value: ";
             }
 
-            cout << "Enter Property's SquareFootage: ";
+            // Square footage
+            cout << "Enter Property's Square Footage: ";
             while (!(cin >> squareFootage) || squareFootage < 0) {
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input. Please enter a non-negative number for the SquareFootage: ";
+                cout << "Invalid input. Please enter a non-negative number for the Square Footage: ";
             }
 
-            // Clear input buffer
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+            // Condition
             cout << "Enter Property's Condition: ";
+            cin.ignore();
             getline(cin, condition);
 
+            // Address details
             cout << "Enter Property's Street: ";
             getline(cin, street);
             cout << "Enter Property's City: ";
@@ -948,6 +1009,7 @@ void PropertyManager::propertyManagerUser() {
             cout << "Enter Property's State: ";
             getline(cin, state);
 
+            // Price
             cout << "Enter Property's Price: ";
             while (!(cin >> price) || price < 0) {
                 cin.clear();
@@ -955,24 +1017,22 @@ void PropertyManager::propertyManagerUser() {
                 cout << "Invalid input. Please enter a non-negative number for the Price: ";
             }
 
-            // Clear input buffer
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+            // Property type
             cout << "Enter Property's Type: ";
+            cin.ignore();
             getline(cin, type);
 
-            //manager.addProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
-            //condition, street, city, state, price, type);
-
+            // Add unapproved property
             manager.addUnApprovedProperty(propertyNumber, builtYear, numberOfBedrooms, marketValue, squareFootage,
                 condition, street, city, state, price, type);
+
             cout << "**************************************************\n" << endl;
             break;
-
         }
 
-
         case 2: {
+            system("cls");
+            // Displaying property details
             int propertyNumber;
             cout << "Enter the Property Number to display details: ";
             while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
@@ -988,38 +1048,61 @@ void PropertyManager::propertyManagerUser() {
             break;
         }
 
-
         case 3:
+            system("cls");
+            // Searching for properties
             manager.searchProperty();
             cout << "**************************************************\n" << endl;
             break;
 
-
         case 4:
+            system("cls");
+            // Comparing properties
             manager.compareProperties();
             cout << "**************************************************\n" << endl;
             break;
 
         case 5:
-            exitFlag = true;
-            cout << "Thanks for Your Time,Goodbye!!\n\n" << endl;
+            system("cls");
+            // Calculating property taxes
+            int propertyNumber;
+            double taxes;
+            cout << "Enter the Property Number to calculate taxes: ";
+            while (!(cin >> propertyNumber) || propertyNumber < 0 || cin.peek() != '\n' || cin.peek() == '.') {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
+            }
+            try {
+                taxes = manager.calculateTaxes(propertyNumber);
+                cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
+            }
+            catch (const exception& e) {
+                cerr << "Error: " << e.what() << endl;
+            }
             cout << "**************************************************\n" << endl;
-            manager.writePropertyDataToFile( propertyData);
+            break;
+
+        case 6:
+            system("cls");
+            // Exiting Property Manager
+            exitFlag = true;
+            cout << "Thanks for Your Time, Goodbye!!\n\n" << endl;
+            cout << "**************************************************\n" << endl;
+            // Write data to files before exiting
+            manager.writePropertyDataToFile(propertyData);
             manager.writeSearchDataToFile(searchDataFile);
             manager.writeUnapprovedPropertiesToFile(unapprovedDataFile);
             break;
         }
     }
-
 }
 
-
-
 // Function to read property data from file
-void PropertyManager::readPropertyDataFromFile( const string& propertyData) {
+void PropertyManager::readPropertyDataFromFile(const string& propertyData) {
     ifstream inFile(propertyData);
     if (!inFile.is_open()) {
-        cerr << "Error: Unable to open file for reading: " << propertyData <<endl;
+        cerr << "Error: Unable to open file for reading: " << propertyData << endl;
         return;
     }
 
@@ -1027,20 +1110,21 @@ void PropertyManager::readPropertyDataFromFile( const string& propertyData) {
 
     string line;
     while (getline(inFile, line)) {
-        cout << "Reading line: " << line <<endl; // Print the entire line
         stringstream ss(line);
         string token;
         vector<string> tokens;
 
-        while (getline(ss, token, '|')) { // Split the line by '|'
+        // Split the line by '|'
+        while (getline(ss, token, '|')) {
             tokens.push_back(token);
         }
 
         if (tokens.size() != 11) {
-            cerr << "Error: Invalid data format in file: " << propertyData <<endl;
+            cerr << "Error: Invalid data format in file: " << propertyData << endl;
             continue;
         }
 
+        // Convert string data to appropriate types
         int propertyNumber = stoi(tokens[0]);
         int numberOfBedrooms = stoi(tokens[2]);
         double marketValue = stod(tokens[3]);
@@ -1056,12 +1140,11 @@ void PropertyManager::readPropertyDataFromFile( const string& propertyData) {
     inFile.close();
 }
 
-
 // Function to write property data to file
 void PropertyManager::writePropertyDataToFile(const string& propertyData) {
     ofstream outFile(propertyData);
     if (!outFile.is_open()) {
-        cerr << "Error: Unable to open file for writing: " << propertyData <<endl;
+        cerr << "Error: Unable to open file for writing: " << propertyData << endl;
         return;
     }
 
@@ -1083,29 +1166,26 @@ void PropertyManager::writePropertyDataToFile(const string& propertyData) {
     outFile.close();
 }
 
-
-// Function to write Searches data to file
-
+// Function to write search data to file
 void PropertyManager::writeSearchDataToFile(const string& searchDataFile) {
     ofstream outFile(searchDataFile);
     if (!outFile.is_open()) {
-        cerr << "Error: Unable to open file for writing: " << searchDataFile <<endl;
+        cerr << "Error: Unable to open file for writing: " << searchDataFile << endl;
         return;
     }
 
     for (const auto& entry : searchFrequency) {
-        outFile << entry.first << "|" << entry.second <<endl;
+        outFile << entry.first << "|" << entry.second << endl;
     }
 
     outFile.close();
 }
 
-// Function to read Searches data to file
-
+// Function to read search data from file
 void PropertyManager::readSearchDataFromFile(const string& searchDataFile) {
     ifstream inFile(searchDataFile);
     if (!inFile.is_open()) {
-        cerr << "Error: Unable to open file for reading: " << searchDataFile <<endl;
+        cerr << "Error: Unable to open file for reading: " << searchDataFile << endl;
         return;
     }
 
@@ -1113,7 +1193,6 @@ void PropertyManager::readSearchDataFromFile(const string& searchDataFile) {
 
     string line;
     while (getline(inFile, line)) {
-        cout << "Reading line: " << line <<endl; // Print the entire line
         stringstream ss(line);
         string key;
         int frequency;
@@ -1122,19 +1201,18 @@ void PropertyManager::readSearchDataFromFile(const string& searchDataFile) {
             searchFrequency[key] = frequency;
         }
         else {
-            cerr << "Error: Invalid data format in file: " << searchDataFile <<endl;
+            cerr << "Error: Invalid data format in file: " << searchDataFile << endl;
         }
     }
 
     inFile.close();
 }
 
-// function for writing the unapproved properties to the file
-
+// Function to write unapproved properties to file
 void PropertyManager::writeUnapprovedPropertiesToFile(const string& unapprovedDataFile) {
     ofstream outFile(unapprovedDataFile);
     if (!outFile.is_open()) {
-        cerr << "Error: Unable to open file for writing: " << unapprovedDataFile <<endl;
+        cerr << "Error: Unable to open file for writing: " << unapprovedDataFile << endl;
         return;
     }
 
@@ -1150,7 +1228,7 @@ void PropertyManager::writeUnapprovedPropertiesToFile(const string& unapprovedDa
             << property.getPropertyLocation().City << "|"
             << property.getPropertyLocation().State << "|"
             << property.getPrice() << "|"
-            << property.getPropertyType() <<endl;
+            << property.getPropertyType() << endl;
 
         unApprovedProperties.pop();
     }
@@ -1158,12 +1236,11 @@ void PropertyManager::writeUnapprovedPropertiesToFile(const string& unapprovedDa
     outFile.close();
 }
 
-// A function for reading the unapproved propeties from file back to the Queue
-
+// Function to read unapproved properties from file
 void PropertyManager::readUnapprovedPropertiesFromFile(const string& unapprovedDataFile) {
     ifstream inFile(unapprovedDataFile);
     if (!inFile.is_open()) {
-        cerr << "Error: Unable to open file for reading: " << unapprovedDataFile <<endl;
+        cerr << "Error: Unable to open file for reading: " << unapprovedDataFile << endl;
         return;
     }
 
@@ -1174,20 +1251,21 @@ void PropertyManager::readUnapprovedPropertiesFromFile(const string& unapprovedD
 
     string line;
     while (getline(inFile, line)) {
-        cout << "Reading line: " << line <<endl; // Print the entire line
         stringstream ss(line);
         string token;
         vector<string> tokens;
 
-        while (getline(ss, token, '|')) { // Split the line by '|'
+        // Split the line by '|'
+        while (getline(ss, token, '|')) {
             tokens.push_back(token);
         }
 
         if (tokens.size() != 11) {
-            cerr << "Error: Invalid data format in file: " << unapprovedDataFile <<endl;
+            cerr << "Error: Invalid data format in file: " << unapprovedDataFile << endl;
             continue;
         }
 
+        // Convert string data to appropriate types
         int propertyNumber = stoi(tokens[0]);
         int numberOfBedrooms = stoi(tokens[2]);
         double marketValue = stod(tokens[3]);

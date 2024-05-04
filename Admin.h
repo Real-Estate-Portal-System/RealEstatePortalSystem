@@ -4,51 +4,73 @@
 
 #include <string>
 #include <unordered_map>
+
 using namespace std;
 
 class Admin
 {
 private:
-	string username;
-	string password;
-	string fname;
-	string lname;
-	bool isAdmin;
+    string username; // Username of the admin
+    string password; // Password of the admin
+    string fname; // First name of the admin
+    string lname; // Last name of the admin
+    bool isAdmin; // Flag indicating if the admin is an administrator
 
 public:
-	//Constractor for User class
-	Admin();
-	Admin(const string& username, const string& password,
-		const string& fname, const string& lname, bool isAdmin = true);
+    // Default constructor for the Admin class
+    Admin();
 
-	//Getters
-	string getAdminUsername() const;
-	string getAdminPassword() const;
-	string getAdminFname() const;
-	string getAdminLname() const;
-	bool isAdminUser() const;
+    // Parameterized constructor for the Admin class
+    Admin(const string& username, const string& password,
+        const string& fname, const string& lname, bool isAdmin = true);
 
-	// Load user data from file and populate the hash map
-	static void loadAdminDataFromFile(const string& admin_data);
+    // Getter for admin username
+    string getAdminUsername() const;
 
-	// Write all the user data from the hash map to file
-	static void writeAdminDataToFile(const string& admin_data);
+    // Getter for admin password
+    string getAdminPassword() const;
 
-	//Sign up a new user
-	static bool signupAdmin();
+    // Getter for admin first name
+    string getAdminFname() const;
 
-	//User Login 
-	static bool loginAdmin();
-	//User menu after log in
-	void admin_menu();
-	//Update user info
-	bool updateAdminInfo(const string& newPassword, const string& newFname, const string& newLname);
-	//Admin creating a new admin
-	void createNewAdmin();
+    // Getter for admin last name
+    string getAdminLname() const;
 
+    // Getter for admin status
+    bool isAdminUser() const;
+
+    // Load admin data from file and populate the hash map
+    static void loadAdminDataFromFile(const string& admin_data);
+
+    // Write all the admin data from the hash map to file
+    static void writeAdminDataToFile(const string& admin_data);
+
+    // Sign up a new admin
+    static bool signupAdmin();
+
+    // Admin Login
+    static bool loginAdmin();
+
+    // Admin menu after login
+    void admin_menu();
+
+    // Update admin info
+    void admin_personal_info(const string& username);
+
+    // Admin updates his personal info
+    bool admin_updateInfo(const string& newPassword, const string& newFname, const string& newLname);
+
+    // Admin creates a new admin
+    void createNewAdmin();
+
+    // User management functions
+    void user_management();
+
+    // Function to count total number of admins
+    int countAdmins();
 };
+
+// Main welcome page for admins with signup and login options
 void welcome_page_admin();
 
 #endif
-
-
