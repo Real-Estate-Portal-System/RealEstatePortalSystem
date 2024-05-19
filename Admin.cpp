@@ -338,6 +338,7 @@ void Admin::user_management() {
     switch (choice) {
     case 1:
         // Loop for creating multiple users
+        cin.ignore();
         while (answer == 'y' || answer == 'Y') {
             User::signup();
             cout << "Do you want to add more? (y / n) " << endl;
@@ -347,6 +348,7 @@ void Admin::user_management() {
         user_management();
         break;
     case 2:
+        cin.ignore();
         // Update user account
         system("cls");
         update_user_info();

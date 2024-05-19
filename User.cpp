@@ -194,6 +194,8 @@ void User::user_menu() {
             cout << "Thanks for Your Time, Goodbye!!" << endl;
             break;
         }
+        default:
+            cout << "Enter a valid option" << endl;
         }
     }
 }
@@ -292,6 +294,7 @@ bool update_user_info() {
     // Prompt for entering the username of the user to update
     string username;
     cout << "Enter the username of the user you want to update: ";
+    cin >> username;
 
     // Check if the entered username exists
     if (users.find(username) != users.end()) {

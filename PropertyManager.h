@@ -42,8 +42,8 @@ public:
 
     void generateReport(); // Generate property-related, user-related, and admin-related reports
     double calculateTotalTaxRevenue(); // Calculate total tax revenue
-    double calculateAverageMarketValue(); // Calculate average market value
-    int calculateTotalSearches(); // Calculate total property searches
+    double calculateAverageMarketValue() const; // Calculate average market value
+    int calculateTotalSearches() const; // Calculate total property searches
 
     // Function for writing property data to file
     void writePropertyDataToFile(const std::string& filename);

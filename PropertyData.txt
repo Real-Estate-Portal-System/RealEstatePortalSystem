@@ -1,7 +1,9 @@
 1000|2010|5|500000|500|Excellent|20th|Nasr|Cairo|25000|Mansion
 1001|2000|4|400000|100|Brilliant|Alexis|Madina|Cairo|15000|Apartment
 1004|2015|2|25000|100|Excellent|12th|Benson|Meldon|1500|Condo
+1011|2008|3|180000|150.89|Brilliant|3rd|Ohio|Ohio|30000|Villa
 1003|2007|7|800000|6000.5|Excellent|Alaba|San|Maelin|45000|Palance
 1006|2022|3|200000|200|Brilliant|18th|Alex|Alexandria|14000|Mansion
 1010|1999|4|150000|300.45|Great|9th|Denzel City|Denzel|12000|Apartment
 1002|2001|8|250000|150.5|Excellent|23rd|Mau|Klinaq|16000|Villa
+1015|1988|4|175000|185|Excellent|10th|Royal City|Great Nation|30000|Palace
