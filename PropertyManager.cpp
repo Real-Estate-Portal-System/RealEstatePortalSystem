@@ -464,23 +464,27 @@ void PropertyManager::editProperty(int propertyNumber) {
 }
 
 // Method to calculate taxes for a property.
-double PropertyManager::calculateTaxes(int propertyNumber) {
+double PropertyManager::calculateTaxes(int propertyNumber) const{
     if (propertyMap.empty()) {
-        throw runtime_error("No properties currently available in the rental portal system.");
+        cout << "No properties currently available in the rental portal system." << endl;
+        return 0.0;
     }
 
-    auto it = propertyMap.find(propertyNumber);
-    if (it == propertyMap.end()) {
-        throw invalid_argument("The property with property number " + to_string(propertyNumber) + " does not exist in the property system.");
-    }
+        auto it = propertyMap.find(propertyNumber);
+        if (it == propertyMap.end()) {
+            cout << "The property with property number " + to_string(propertyNumber) + " does not exist in the property system." << endl;
+            return 0.0;
+        }
 
-    const Property& foundProperty = it->second;
+        const Property& foundProperty = it->second;
 
-    // Calculate taxes based on property's market value, square footage.
-    double taxRate = 0.0002; // Tax rate (0.02%)
-    double taxes = foundProperty.getMarketValue() * taxRate * foundProperty.getSquareFootage();
+        // Calculate taxes based on property's market value, square footage.
+        double taxRate = 0.0002; // Tax rate (0.02%)
+        double taxes = foundProperty.getMarketValue() * taxRate * foundProperty.getSquareFootage();
 
-    return taxes;
+        return taxes;
+    
+    
 }
 
 // Method to search for properties by location.
@@ -869,13 +873,12 @@ void PropertyManager::propertyManagerAdmin() {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
             }
-            try {
+            
                 taxes = manager.calculateTaxes(propertyNumber);
-                cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
-            }
-            catch (const system_error & e) {
-                cerr << "Error: " << e.what() << endl;
-            }
+                if (taxes > 0) {
+                    cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
+                }
+            
             cout << "**************************************************\n" << endl;
             break;
         }
@@ -1079,7 +1082,7 @@ void PropertyManager::propertyManagerUser() {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
             }
-            Property* myProperty = manager.getPropertyByNumber(propertyNumber);
+            Property const* myProperty = manager.getPropertyByNumber(propertyNumber);
             if (myProperty != nullptr) {
                 manager.displayPropertyDetails(*myProperty);
                 cout << "**************************************************\n" << endl;
@@ -1112,13 +1115,12 @@ void PropertyManager::propertyManagerUser() {
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "Invalid input. Please enter a non-negative integer for the Property Number: ";
             }
-            try {
+            
                 taxes = manager.calculateTaxes(propertyNumber);
-                cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
-            }
-            catch (const system_error & e) {
-                cerr << "Error: " << e.what() << endl;
-            }
+                if (taxes > 0) {
+                    cout << "The Property Taxes: $" << fixed << setprecision(3) << taxes << " Yearly" << endl;
+                }
+            
             cout << "**************************************************\n" << endl;
             break;
 

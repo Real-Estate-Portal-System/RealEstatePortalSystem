@@ -23,7 +23,7 @@ public:
     void deleteProperty(int propertyNumber); // Delete a property
     void displayPropertyDetails(const Property& property); // Display details of a property
     void editProperty(int propertyNumber); // Edit property details
-    double calculateTaxes(int propertyNumber); // Calculate property taxes
+    double calculateTaxes(int propertyNumber) const; // Calculate property taxes
     void propertyManagerUser(); // User-specific property management menu
     void propertyManagerAdmin(); // Admin-specific property management menu
     void compareProperties(); // Compare property values

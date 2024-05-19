@@ -1,6 +1,7 @@
 SquareFootage Range|6
 Mansion|1
-Madina|2
-Villa|1
+Madina|3
+Villa|2
+Price Range|1
 Bedrooms|1
 Nasr|1
