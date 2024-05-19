@@ -13,13 +13,13 @@ private: // Private access specifier for class members
     string password; // Variable to store the password
     string fname; // Variable to store the first name
     string lname; // Variable to store the last name
-    bool isAdmin; // Variable to indicate if the user is an admin
+    
 
 public:
     // Constructor for User class
     User(); // Default constructor
     User(const string& username, const string& password,
-        const string& fname, const string& lname, bool isAdmin = false); // Parameterized constructor
+        const string& fname, const string& lname); // Parameterized constructor
 
     // Getters
     string getUsername() const; // Getter for username
@@ -29,7 +29,7 @@ public:
     void setPassword(const string& newPassword); // Setter for password
     void setFname(const string& newFname); // Setter for first name
     void setLname(const string& newLname); // Setter for last name
-    bool isAdminUser() const; // Getter to check if the user is an admin
+    
 
     // Load user data from file and populate the hash map
     static void loadUserDataFromFile(const string& user_data);

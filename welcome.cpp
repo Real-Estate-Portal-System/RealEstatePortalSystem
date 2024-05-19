@@ -38,12 +38,12 @@ void welcome_page() {
         system("cls"); // Clearing the screen
         welcome_page_admin();
         break;
-    case 3:
+    case 3: {
         // If user chooses option 3 (EXIT), display goodbye message and return
         system("cls");
         cout << "\n\n\tThank you for your time, dear user!\n\tLooking forward to seeing you again soon. \n\tFarewell for now!\n\n" << endl;
-
         break;
+    }
     default:
         // Handling any invalid input by displaying a message and recursively calling welcome_page()
         cout << "Invalid choice!" << endl;

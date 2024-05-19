@@ -1,4 +1,4 @@
-SquareFootage Range|6
+SquareFootage Range|7
 Mansion|1
 Madina|3
 Villa|2

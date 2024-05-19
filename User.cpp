@@ -8,11 +8,13 @@ using namespace std; // Using the standard namespace
 // The Hash map to store user data
 static ::unordered_map<string, User> users;
 
-User::User() : isAdmin(false) {} // Default constructor for User class
+User::User() : username(""), password(""), fname(""), lname("") {
+    // Default constructor implementation
+}
 User::User(const string& username, const string& password,
-    const string& fname, const string& lname, bool isAdmin) :
+    const string& fname, const string& lname) :
     username(username), password(password),
-    fname(fname), lname(lname), isAdmin(isAdmin) {} // Parameterized constructor for User class
+    fname(fname), lname(lname) {} // Parameterized constructor for User class
 
 // Getters
 string User::getUsername() const {
@@ -27,9 +29,7 @@ string User::getFname() const {
 string User::getLname() const {
     return lname;
 }
-bool User::isAdminUser() const {
-    return isAdmin;
-}
+
 
 //Setters
 void User::setPassword(const string& newPassword) {
@@ -52,7 +52,10 @@ void User::loadUserDataFromFile(const string& user_data) {
     }
 
     // Variables to store user data from file
-    string saved_username, saved_password, saved_fname, saved_lname;
+    string saved_username;
+    string saved_password;
+    string saved_fname;
+    string saved_lname;
 
     // Read data from file and populate the hash map
     while (inFile >> saved_username >> saved_password >> saved_fname >> saved_lname) {
@@ -87,8 +90,12 @@ void User::writeUserDataToFile(const string& user_data) {
 
 bool User::signup() {
     // Variables for user data
-    string username, password, hashpassword, fname, lname;
-    bool isAdmin = false;
+    string username;
+    string password;
+    string hashpassword;
+    string fname;
+    string lname;
+    
 
     // Input user data
     cout << "Enter username: ";
@@ -111,7 +118,7 @@ bool User::signup() {
     cin >> lname;
 
     // Create new user object and add to the hash map
-    users[username] = User(username, hashpassword, fname, lname, isAdmin);
+    users[username] = User(username, hashpassword, fname, lname);
     system("cls");
     cout << "Sign up successful, please login" << endl;
     return true;
@@ -269,7 +276,7 @@ bool User::updateInfo(const string& newPassword, const string& newFirstName, con
     this->password = newPassword.empty() ? password : newPassword;
     this->fname = newFirstName.empty() ? fname : newFirstName;
     this->lname = newLastName.empty() ? lname : newLastName;
-    users[username] = User(username, newPassword, newFirstName, newLastName, isAdmin);
+    users[username] = User(username, newPassword, newFirstName, newLastName);
     return true;
 }
 
